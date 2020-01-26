@@ -29,7 +29,7 @@
  * FROM USE OR INABILITY TO USE THIS SOFTWARE.
  * 
  * Version: 7.3.0
- * Release date: 12/12/2019 (built at 12/12/2019 14:21:24)
+ * Release date: 12/12/2019 (built at 26/01/2020 22:33:52)
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -917,7 +917,7 @@ __webpack_require__(12);
 
 __webpack_require__(53);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 __webpack_require__(172);
 
@@ -929,7 +929,7 @@ __webpack_require__(37);
 
 __webpack_require__(38);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 __webpack_require__(50);
 
@@ -2659,7 +2659,7 @@ __webpack_require__(10);
 
 __webpack_require__(37);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 exports.__esModule = true;
 exports.isNumeric = isNumeric;
@@ -3840,7 +3840,7 @@ __webpack_require__(304);
 
 __webpack_require__(227);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 __webpack_require__(50);
 
@@ -4594,6 +4594,58 @@ $({ target: 'String', proto: true, forced: !correctIsRegExpLogic('includes') }, 
 
 "use strict";
 
+var $ = __webpack_require__(21);
+var isObject = __webpack_require__(43);
+var isArray = __webpack_require__(107);
+var toAbsoluteIndex = __webpack_require__(129);
+var toLength = __webpack_require__(49);
+var toIndexedObject = __webpack_require__(60);
+var createProperty = __webpack_require__(109);
+var arrayMethodHasSpeciesSupport = __webpack_require__(110);
+var wellKnownSymbol = __webpack_require__(35);
+
+var SPECIES = wellKnownSymbol('species');
+var nativeSlice = [].slice;
+var max = Math.max;
+
+// `Array.prototype.slice` method
+// https://tc39.github.io/ecma262/#sec-array.prototype.slice
+// fallback for not array-like ES3 strings and DOM objects
+$({ target: 'Array', proto: true, forced: !arrayMethodHasSpeciesSupport('slice') }, {
+  slice: function slice(start, end) {
+    var O = toIndexedObject(this);
+    var length = toLength(O.length);
+    var k = toAbsoluteIndex(start, length);
+    var fin = toAbsoluteIndex(end === undefined ? length : end, length);
+    // inline `ArraySpeciesCreate` for usage native `Array#slice` where it's possible
+    var Constructor, result, n;
+    if (isArray(O)) {
+      Constructor = O.constructor;
+      // cross-realm fallback
+      if (typeof Constructor == 'function' && (Constructor === Array || isArray(Constructor.prototype))) {
+        Constructor = undefined;
+      } else if (isObject(Constructor)) {
+        Constructor = Constructor[SPECIES];
+        if (Constructor === null) Constructor = undefined;
+      }
+      if (Constructor === Array || Constructor === undefined) {
+        return nativeSlice.call(O, k, fin);
+      }
+    }
+    result = new (Constructor === undefined ? Array : Constructor)(max(fin - k, 0));
+    for (n = 0; k < fin; k++, n++) if (k in O) createProperty(result, n, O[k]);
+    result.length = n;
+    return result;
+  }
+});
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 var fixRegExpWellKnownSymbolLogic = __webpack_require__(135);
 var anObject = __webpack_require__(46);
 var toObject = __webpack_require__(61);
@@ -4717,58 +4769,6 @@ fixRegExpWellKnownSymbolLogic('replace', 2, function (REPLACE, nativeReplace, ma
       }
       return capture === undefined ? '' : capture;
     });
-  }
-});
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var $ = __webpack_require__(21);
-var isObject = __webpack_require__(43);
-var isArray = __webpack_require__(107);
-var toAbsoluteIndex = __webpack_require__(129);
-var toLength = __webpack_require__(49);
-var toIndexedObject = __webpack_require__(60);
-var createProperty = __webpack_require__(109);
-var arrayMethodHasSpeciesSupport = __webpack_require__(110);
-var wellKnownSymbol = __webpack_require__(35);
-
-var SPECIES = wellKnownSymbol('species');
-var nativeSlice = [].slice;
-var max = Math.max;
-
-// `Array.prototype.slice` method
-// https://tc39.github.io/ecma262/#sec-array.prototype.slice
-// fallback for not array-like ES3 strings and DOM objects
-$({ target: 'Array', proto: true, forced: !arrayMethodHasSpeciesSupport('slice') }, {
-  slice: function slice(start, end) {
-    var O = toIndexedObject(this);
-    var length = toLength(O.length);
-    var k = toAbsoluteIndex(start, length);
-    var fin = toAbsoluteIndex(end === undefined ? length : end, length);
-    // inline `ArraySpeciesCreate` for usage native `Array#slice` where it's possible
-    var Constructor, result, n;
-    if (isArray(O)) {
-      Constructor = O.constructor;
-      // cross-realm fallback
-      if (typeof Constructor == 'function' && (Constructor === Array || isArray(Constructor.prototype))) {
-        Constructor = undefined;
-      } else if (isObject(Constructor)) {
-        Constructor = Constructor[SPECIES];
-        if (Constructor === null) Constructor = undefined;
-      }
-      if (Constructor === Array || Constructor === undefined) {
-        return nativeSlice.call(O, k, fin);
-      }
-    }
-    result = new (Constructor === undefined ? Array : Constructor)(max(fin - k, 0));
-    for (n = 0; k < fin; k++, n++) if (k in O) createProperty(result, n, O[k]);
-    result.length = n;
-    return result;
   }
 });
 
@@ -7858,11 +7858,11 @@ __webpack_require__(12);
 
 __webpack_require__(138);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 __webpack_require__(55);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 exports.__esModule = true;
 exports.normalizeSelection = normalizeSelection;
@@ -8190,7 +8190,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__69__;
 "use strict";
 
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 __webpack_require__(137);
 
@@ -8234,7 +8234,7 @@ __webpack_require__(10);
 
 __webpack_require__(37);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 exports.__esModule = true;
 exports.toUpperCaseFirst = toUpperCaseFirst;
@@ -8671,7 +8671,7 @@ __webpack_require__(19);
 
 __webpack_require__(138);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 __webpack_require__(33);
 
@@ -9445,7 +9445,7 @@ function addItem(key, item) {
 
 __webpack_require__(114);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 exports.__esModule = true;
 exports.isFormulaExpression = isFormulaExpression;
@@ -13335,7 +13335,7 @@ __webpack_require__(30);
 
 __webpack_require__(12);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 exports.__esModule = true;
 exports.default = void 0;
@@ -14818,7 +14818,7 @@ __webpack_require__(12);
 
 __webpack_require__(114);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 __webpack_require__(50);
 
@@ -17697,7 +17697,7 @@ __webpack_require__(82);
 
 __webpack_require__(13);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 __webpack_require__(359);
 
@@ -21739,7 +21739,7 @@ __webpack_require__(13);
 
 __webpack_require__(114);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 exports.__esModule = true;
 exports.instanceToHTML = instanceToHTML;
@@ -22842,7 +22842,7 @@ __webpack_require__(113);
 
 __webpack_require__(37);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 exports.__esModule = true;
 exports.default = void 0;
@@ -31342,7 +31342,7 @@ __webpack_require__(10);
 
 __webpack_require__(13);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 __webpack_require__(23);
 
@@ -32360,18 +32360,19 @@ __webpack_require__(12);
 
 __webpack_require__(39);
 
+__webpack_require__(40);
+
 __webpack_require__(50);
 
 /**
  * SheetClip - Spreadsheet Clipboard Parser
- * version 0.2
+ * version 0.2-rewritten
  *
  * This tiny library transforms JavaScript arrays to strings that are pasteable by LibreOffice, OpenOffice,
  * Google Docs and Microsoft Excel.
  *
- * Copyright 2012, Marcin Warpechowski
+ * Somehow based on original version 0.2 by Marcin Warpechowski along with StackOverflow Q&A.
  * Licensed under the MIT license.
- * http://github.com/warpech/sheetclip/
  */
 
 /*jslint white: true*/
@@ -32390,51 +32391,55 @@ __webpack_require__(50);
      * @returns {Array}
      */
     parse: function parse(str) {
-      var r,
-          rLen,
-          rows,
+      var l = str.length,
           arr = [],
-          a = 0,
-          c,
-          cLen,
-          multiline,
-          last;
-      rows = str.replace(/\r\n|\r/g, '\n').split('\n');
+          newRow = true,
+          newCell,
+          dataQuoted,
+          r,
+          c;
 
-      if (rows.length > 1 && rows[rows.length - 1] === '') {
-        rows.pop();
-      }
+      for (var i = 0; i < l; i++) {
+        if (newRow) {
+          arr.push([]);
+          r = arr.length - 1;
+          newRow = false;
+          newCell = true;
+        }
 
-      for (r = 0, rLen = rows.length; r < rLen; r += 1) {
-        rows[r] = rows[r].split('\t');
+        if (newCell) {
+          arr[r].push('');
+          c = arr[r].length - 1;
+          newCell = false;
+          dataQuoted = str[i] == '"';
 
-        for (c = 0, cLen = rows[r].length; c < cLen; c += 1) {
-          if (!arr[a]) {
-            arr[a] = [];
-          }
-
-          if (multiline && c === 0) {
-            last = arr[a].length - 1;
-            arr[a][last] = arr[a][last] + '\n' + rows[r][0];
-
-            if (multiline && countQuotes(rows[r][0]) & 1) {
-              //& 1 is a bitwise way of performing mod 2
-              multiline = false;
-              arr[a][last] = arr[a][last].substring(0, arr[a][last].length - 1).replace(/""/g, '"');
-            }
-          } else {
-            if (c === cLen - 1 && rows[r][c].indexOf('"') === 0 && countQuotes(rows[r][c]) & 1) {
-              arr[a].push(rows[r][c].substring(1).replace(/""/g, '"'));
-              multiline = true;
-            } else {
-              arr[a].push(rows[r][c].replace(/""/g, '"'));
-              multiline = false;
-            }
+          if (dataQuoted) {
+            i++;
           }
         }
 
-        if (!multiline) {
-          a += 1;
+        for (var j = i; j < l + 1; j++) {
+          if (dataQuoted && j < l) {
+            if (str[j] != '"') {
+              continue;
+            }
+
+            j++;
+
+            if (str[j] == '"') {
+              arr[r][c] += str.slice(i, j - 1);
+              i = j;
+              continue;
+            }
+          }
+
+          if (j == l || str[j] == "\t" || str[j] == "\n") {
+            newCell = str[j] == "\t";
+            newRow = str[j] == "\n";
+            arr[r][c] += str.slice(i, j - +dataQuoted);
+            i = j;
+            break;
+          }
         }
       }
 
@@ -32465,23 +32470,20 @@ __webpack_require__(50);
 
           val = arr[r][c];
 
-          if (typeof val === 'string') {
-            if (val.indexOf('\n') > -1) {
+          if (val === null || val === void 0) {
+            str += '';
+          } else {
+            val += '';
+
+            if (val.length > 0 && (val[0] == '"' || val.indexOf('\t') > -1 || val.indexOf('\n') > -1)) {
               str += '"' + val.replace(/"/g, '""') + '"';
             } else {
               str += val;
             }
-          } else if (val === null || val === void 0) {
-            // void 0 resolves to undefined
-            str += '';
-          } else {
-            str += val;
           }
         }
 
-        if (r !== rLen - 1) {
-          str += '\n';
-        }
+        str += '\n';
       }
 
       return str;
@@ -36542,7 +36544,7 @@ __webpack_require__(15);
 
 __webpack_require__(142);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 __webpack_require__(75);
 
@@ -38776,7 +38778,7 @@ function operationResult(conditions, value) {
 
 var _interopRequireWildcard = __webpack_require__(9);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 exports.__esModule = true;
 exports.operationResult = operationResult;
@@ -39697,7 +39699,7 @@ Handsontable.EventManager = _eventManager.default;
 Handsontable._getListenersCounter = _eventManager.getListenersCounter; // For MemoryLeak tests
 
 Handsontable.packageName = 'handsontable';
-Handsontable.buildDate = "12/12/2019 14:21:24";
+Handsontable.buildDate = "26/01/2020 22:33:52";
 Handsontable.version = "7.3.0"; // Export Hooks singleton
 
 Handsontable.hooks = _pluginHooks.default.getSingleton(); // TODO: Remove this exports after rewrite tests about this module
@@ -45808,7 +45810,7 @@ __webpack_require__(12);
 
 __webpack_require__(53);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 __webpack_require__(50);
 
@@ -45936,7 +45938,7 @@ exports.default = _default;
 
 __webpack_require__(19);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 exports.__esModule = true;
 exports.default = void 0;
@@ -46655,7 +46657,7 @@ __webpack_require__(12);
 
 __webpack_require__(15);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 __webpack_require__(75);
 
@@ -47734,7 +47736,7 @@ exports.default = _default;
 
 var _interopRequireDefault = __webpack_require__(0);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 exports.__esModule = true;
 exports.parseDelay = parseDelay;
@@ -49639,7 +49641,7 @@ exports.default = _default;
 
 var _interopRequireDefault = __webpack_require__(0);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 __webpack_require__(62);
 
@@ -54754,7 +54756,7 @@ exports.default = _default;
 
 var _interopRequireDefault = __webpack_require__(0);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 exports.__esModule = true;
 exports.rootComparator = rootComparator;
@@ -66441,7 +66443,7 @@ var _interopRequireDefault = __webpack_require__(0);
 
 __webpack_require__(12);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 exports.__esModule = true;
 exports.default = void 0;
@@ -67272,7 +67274,7 @@ var _interopRequireDefault = __webpack_require__(0);
 
 __webpack_require__(12);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 __webpack_require__(32);
 
@@ -68140,7 +68142,7 @@ __webpack_require__(12);
 
 __webpack_require__(53);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 __webpack_require__(32);
 
@@ -68148,7 +68150,7 @@ __webpack_require__(55);
 
 __webpack_require__(62);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 __webpack_require__(50);
 
@@ -69696,7 +69698,7 @@ __webpack_require__(30);
 
 __webpack_require__(12);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 __webpack_require__(75);
 
@@ -71754,7 +71756,7 @@ __webpack_require__(19);
 
 __webpack_require__(12);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 __webpack_require__(50);
 
@@ -74127,7 +74129,7 @@ __webpack_require__(113);
 
 __webpack_require__(37);
 
-__webpack_require__(39);
+__webpack_require__(40);
 
 exports.__esModule = true;
 exports.default = void 0;
@@ -74718,7 +74720,7 @@ exports.default = _default;
 
 var _interopRequireDefault = __webpack_require__(0);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 exports.__esModule = true;
 exports.rootComparator = rootComparator;
@@ -78867,7 +78869,7 @@ __webpack_require__(47);
 
 __webpack_require__(12);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 exports.__esModule = true;
 exports.default = void 0;
@@ -81781,9 +81783,9 @@ var _interopRequireDefault = __webpack_require__(0);
 
 __webpack_require__(19);
 
-__webpack_require__(40);
-
 __webpack_require__(39);
+
+__webpack_require__(40);
 
 exports.__esModule = true;
 exports.default = void 0;
@@ -82747,7 +82749,7 @@ __webpack_require__(19);
 
 __webpack_require__(12);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 __webpack_require__(32);
 
@@ -85858,7 +85860,7 @@ __webpack_require__(12);
 
 __webpack_require__(15);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 __webpack_require__(32);
 
@@ -86632,7 +86634,7 @@ var _interopRequireDefault = __webpack_require__(0);
 
 __webpack_require__(12);
 
-__webpack_require__(40);
+__webpack_require__(39);
 
 __webpack_require__(32);
 
